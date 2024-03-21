@@ -26,3 +26,6 @@ Finished 15_1_14 28:32
   ```
 
   Aside from the possible _name collision avoidance_, I'm unsure what could be the benefit of using `use` in blocks rather than at the top of the file.
+
+- One has to **be mindful of using _paths_ in libraries**.
+    - The **"absolute" path, like `foo.json` will point to the library root directory, not the main application root directory**.

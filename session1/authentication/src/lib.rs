@@ -1,10 +1,11 @@
 use std::collections::HashMap;
-use std::hash::Hash;
 use std::path::Path;
+use project_root::get_project_root;
+
 use serde::{Deserialize, Serialize};
 
 pub fn hash_password(password: &str) -> String {
-    use sha2::{Digest};
+    use sha2::Digest;
     let mut hasher = sha2::Sha256::new();
     hasher.update(password);
 
@@ -57,13 +58,18 @@ pub fn get_default_users() -> HashMap<String, User> {
 }
 
 pub fn save_users(users: HashMap<String, User>) {
-    let users_path = Path::new("users.json");
+    let project_root = get_project_root().unwrap();
+    let users_path = project_root.join(Path::new("users.json"));
+
     let users_json = serde_json::to_string(&users).unwrap();
     std::fs::write(users_path, users_json).unwrap();
 }
 
 pub fn get_users() -> HashMap<String, User> {
-    let users_path = Path::new("users.json");
+    let project_root = get_project_root().unwrap();
+    let users_path = project_root.join(Path::new("users.json"));
+
+
     return if users_path.exists() {
         let users_json = std::fs::read_to_string(users_path).unwrap();
         let users: HashMap<String, User> = serde_json::from_str(&users_json.as_str()).unwrap();
@@ -84,13 +90,18 @@ fn get_admin_users() {
 
 pub fn login(username: &str, password: &str) -> Option<LoginAction> {
     let users = get_users();
-    let password = hash_password(password);
 
-    let found_user = users.get(username);
-    if let Some(user) = found_user {
-        if user.password == password {
-            return Some(LoginAction::Granted(user.role.clone()));
+    let hashed_password = hash_password(password);
+
+    if let Some(found_user) = users.get(username) {
+        dbg!(password, &hashed_password, &found_user, &users);
+
+
+        if found_user.password == hashed_password {
+            return Some(LoginAction::Granted(found_user.role.clone()));
         }
+
+        println!("Denied!");
         return Some(LoginAction::Denied);
     };
 
