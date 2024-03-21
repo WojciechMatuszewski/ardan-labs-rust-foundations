@@ -1,6 +1,6 @@
 # ArdanLabs Rust
 
-Finished 15_1_14 28:32
+Finished 17_2_1
 
 ## Learnings
 
