@@ -1,6 +1,6 @@
 # ArdanLabs Rust
 
-Finished 17_2_1
+24_2_8
 
 ## Learnings
 
