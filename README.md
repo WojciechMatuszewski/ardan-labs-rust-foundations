@@ -84,3 +84,95 @@
 
   If I did not use the `thread::scope`, I would need to _move_ the ownership of the `person` into the closure.
   Doing that would prevent me from using the `person.first_name` AFTER the thread finished, since that variable is now dropped.
+
+- When using _global state_ across threads, use `Atomic` operations or `Mutexes`.
+    - Otherwise, you will expose yourself to a world of pain and misery with race conditions everywhere.
+    - `Mutexes` can **create "traffic jam" if you are not fast enough with releasing the lock**.
+        - `Atomics` do not suffer from this issue as they implement different mechanism than "locking."
+        - Keep in mind that `Atomics` are for _simple_ data structures, like integers or strings. You will not be able to use `Atomic` for vectors and structures.
+
+- The **read-write mutex is a good alternative to the "vanilla" mutex IN SOME SITUATIONS**.
+    - The _read-write mutex_ will only lock when you want to write to a variable.
+        - This means that there is less congestion when you read frequently, but write occasionally.
+
+  ```rust
+
+  use std::sync::RwLock;
+  use once_cell::sync::Lazy;
+
+  // Notice the lazy initialization here.
+  static USERS: Lazy<RwLock<Vec<String>>> = Lazy::new(|| {
+      return RwLock::new(build_users());
+  });
+
+  fn build_users() -> Vec<String> {
+      return vec![
+          "Alice".to_string(),
+          "Bob".to_string(),
+      ];
+  }
+
+  fn read_line() -> String {
+      let mut input = String::new();
+
+      std::io::stdin().read_line(&mut input).unwrap();
+
+      return input.trim().to_string();
+  }
+
+
+  fn main() {
+      std::thread::spawn(|| {
+          loop {
+              println!("Current users (in a thread)");
+              let users = USERS.read().unwrap();
+              println!("{users:?}");
+              std::thread::sleep(std::time::Duration::from_secs(3));
+          }
+      });
+
+      loop {
+          println!("Enter a name to add the user list (or q to quit)");
+
+
+          let input = read_line();
+
+          if input == "q" {
+              break;
+          }
+
+          let mut lock = USERS.write().unwrap();
+          lock.push(input);
+          // Lock will be an automatically released when we go out of scope here (so the next iteration of the loop).
+      }
+  }
+  ```
+
+
+- When using _mutexes_ you might "lock yourself out" of the variable.
+    - Imagine having an infinite loop after acquiring the lock. No other code will ever be able to get the lock unless you "free" the lock.
+    - **Keep in mind that the lock is dropped when you move to another scope**!
+
+- In addition to "locking yourself out," one might "poison the lock." This occurs when the thread holding the lock crashed.
+
+  ```rust
+  use std::sync::Mutex;
+
+  static MY_SHARED: Mutex<i32> = Mutex::new(3);
+
+  fn posioner() {
+      let mut lock = MY_SHARED.lock().unwrap();
+      *lock += 1;
+      panic!("Strike")
+  }
+
+  fn main() {
+      let handle = std::thread::spawn(posioner);
+      println!("Trying to return from the thread");
+      println!("{:?}", handle.join());
+
+      // The mutex is "poisoned"
+      let lock = MY_SHARED.lock();
+      println!("{lock:?}");
+  }
+  ```

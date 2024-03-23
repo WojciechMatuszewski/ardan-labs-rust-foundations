@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 
 [workspace]
-members = [ "session1/authentication","session1/hello_world", "session1/login", "session1/login_manager", "session1/variables", "session2/divide_work", "session2/footgun", "session2/hello", "session2/scoped_threads", "session2/thread_builder"]
+members = [ "session1/authentication","session1/hello_world", "session1/login", "session1/login_manager", "session1/variables", "session2/deadlocks", "session2/divide_work", "session2/footgun", "session2/hello", "session2/mutexes", "session2/rwlocks", "session2/scoped_threads", "session2/thread_builder"]
