@@ -1,6 +1,6 @@
 # ArdanLabs Rust
 
-24_2_8
+38_3_1
 
 ## Learnings
 
