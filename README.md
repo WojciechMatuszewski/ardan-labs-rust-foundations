@@ -176,3 +176,70 @@
       println!("{lock:?}");
   }
   ```
+
+- To **execute `async` code you have to have a runtime in place**.
+    - That runtime will handle scheduling and yielding back given certain events.
+    - There are many `async` runtimes in rust. The most commonly used is the `tokio` crate.
+
+- You can **add parameters to `[tokio::main]` macro.
+    - There is a lot to configure there. You most likely do not need to configure it, but if you do, look there.
+    - You can also build your own runtime via the `runtime::new` from `tokio`.
+
+- Error handling is quite tricky if you do not use external crates.
+    - It is not that the error handling _itself_ is hard, but rather the return types of the `Result` generic type are hard to get right.
+    - In most cases, you will find yourself working with different errors. How do you denote that in the `Result` type? There are two ways to go about it.
+
+  The manual way.
+    ```rust
+    // Box -> lives on the heap (we do not know the size of the error)
+    // `dyn` -> compiler, figure out the exact type during runtime
+    type GenericResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+
+    fn load_users() -> GenericResult<Vec<User>> {
+        let my_path = Path::new("users.json");
+
+        let raw_text = std::fs::read_to_string(my_path)?;
+        let users: Vec<User> = serde_json::from_str(&raw_text)?;
+
+        return Ok(users);
+    }
+    ```
+
+  Use the `anyhow` crate.
+
+    ```rust
+    fn load_users() -> anyhow::Result<Vec<User>> {
+        let my_path = Path::new("users.json");
+
+        let raw_text = std::fs::read_to_string(my_path)?;
+        let users: Vec<User> = serde_json::from_str(&raw_text)?;
+
+        return Ok(users);
+    }
+    ```
+
+- If you are writing a library, you should be specific with the errors. Using `anyhow` when writing a library might not be a good choice.
+    - You most likely want to create your own error types, right?
+    - For that, use the `thiserror` crate.
+
+  ```rust
+  use thiserror::Error;
+
+  #[derive(Debug, Error)]
+  enum UsersError {
+      #[error("No users found")]
+      NoUsers,
+      #[error("Too many users were found")]
+      TooManyUsers,
+  }
+
+  fn load_users() -> Result<Vec<User>, UsersError> {
+      let my_path = Path::new("users.json");
+
+      let raw_text = std::fs::read_to_string(my_path).map_err(|_| { return UsersError::NoUsers; })?;
+
+      let users: Vec<User> = serde_json::from_str(&raw_text).map_err(|_| { return UsersError::NoUsers; })?;
+
+      return Ok(users);
+  }
+  ```
