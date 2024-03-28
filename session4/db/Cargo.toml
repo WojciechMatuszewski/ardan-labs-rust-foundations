@@ -1,0 +1,17 @@
+[package]
+name = "db"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.81"
+tokio = { version = "1.36.0", features = ["full"] }
+tracing = { version = "0.1.40" }
+tracing-subscriber = "0.3.18"
+futures = "0.3.30"
+sqlx = { version = "0.7.4", features = ["runtime-async-std-native-tls", "sqlite"] }
+dotenv = "0.15.0"
+cargo-run-bin = { version = "1.7.2", features = ["default", "cli"] }
+

@@ -2,3 +2,8 @@
 .idea
 users.json
 .cache_ggshield
+.env
+*.db
+*.db-shm
+*.db-wal
+.bin

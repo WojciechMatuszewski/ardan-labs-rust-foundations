@@ -1,6 +1,6 @@
 # ArdanLabs Rust
 
-44_3_7
+52_3_15
 
 ## Learnings
 
@@ -243,3 +243,8 @@
       return Ok(users);
   }
   ```
+
+- For logging, the `tracing` and `tracing_subscriber` crates are the go-to for most people.
+
+- The `sqlx` is a powerful library to handle all your database needs.
+    - It is pretty fun to work with!

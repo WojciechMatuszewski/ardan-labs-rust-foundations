@@ -7,5 +7,8 @@ edition = "2021"
 
 [dependencies]
 
+[package.metadata.bin]
+sqlx-cli = { version = "0.7.4" }
+
 [workspace]
-members = [ "session1/authentication","session1/hello_world", "session1/login", "session1/login_manager", "session1/variables", "session2/deadlocks", "session2/divide_work", "session2/footgun", "session2/hello", "session2/mutexes", "session2/rwlocks", "session2/scoped_threads", "session2/thread_builder", "session3/blocking", "session3/errors", "session3/hello_async", "session3/hello_tokio", "session3/tokio_testing"]
+members = ["session1/authentication", "session1/hello_world", "session1/login", "session1/login_manager", "session1/variables", "session2/deadlocks", "session2/divide_work", "session2/footgun", "session2/hello", "session2/mutexes", "session2/rwlocks", "session2/scoped_threads", "session2/thread_builder", "session3/blocking", "session3/errors", "session3/hello_async", "session3/hello_tokio", "session3/tokio_testing", "session4/db", "session4/logspan"]
