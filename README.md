@@ -1,6 +1,6 @@
 # ArdanLabs Rust
 
-61_4_7
+68_5_0
 
 ## Learnings
 
@@ -290,3 +290,11 @@
 
   trait Human: Speaker + Teacher {}
   ```
+
+
+- Generic types are quite powerful, much more than, for example, TypeScript generics.
+    - They are a compile-time construct, so the more generics you have, the slower your compilation will be.
+
+- Like in the case of JavaScript generators, you can create your own iterators on a given type.
+    - All you have to do is to implement the `Iterator` trait, which means implementing the `next` function.
+    - If you want to optimize things further, you can look into implementing `ExactSizeIterator` **if you know the number of items beforehand**.
