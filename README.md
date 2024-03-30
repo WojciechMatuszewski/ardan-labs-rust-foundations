@@ -1,6 +1,6 @@
 # ArdanLabs Rust
 
-53_3_16:37:17
+61_4_7
 
 ## Learnings
 
@@ -248,3 +248,45 @@
 
 - The `sqlx` is a powerful library to handle all your database needs.
     - It is pretty fun to work with!
+
+- Lifetime system, on the surface, is quite simple.
+    - But in reality, you might get yourself into some complicated scenarios where you start adding _lifetime annotations_ left and right.
+    - In such cases, consider stepping back, and perhaps using the `RC` or `Arc` or similar tools.
+
+- Traits are an excellent tool for hiding implementation details and making sure the _interface_ of a given function is "deep".
+    - That said, in some cases, they can be of hindrance, especially when working with collection types, like `Vec`.
+
+    ```rust
+    trait Animal {}
+
+    struct Dog;
+
+    struct Cat;
+
+    impl Animal for Dog {}
+
+    impl Animal for Cat {}
+
+    fn main() {
+        let animals: Vec<Box<dyn Animal>> = vec![
+            Box::new(Cat),
+            Box::new(Dog)
+        ];
+    }
+    ```
+
+  In the code snippet above, I had to use `Box` to enable the compiler to get the _size_ of the element in the vector at runtime. Using `Box` makes the whole program a bit slower.
+
+- You **can compose traits via the `+` syntax**.
+
+  ```rust
+  trait Speaker {
+      fn speak();
+  }
+
+  trait Teacher {
+      fn teach();
+  }
+
+  trait Human: Speaker + Teacher {}
+  ```
