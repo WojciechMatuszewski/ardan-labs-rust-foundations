@@ -298,3 +298,8 @@
 - Like in the case of JavaScript generators, you can create your own iterators on a given type.
     - All you have to do is to implement the `Iterator` trait, which means implementing the `next` function.
     - If you want to optimize things further, you can look into implementing `ExactSizeIterator` **if you know the number of items beforehand**.
+
+## Wrapping up
+
+The course is great. The Rust language is a bit low-level for me, but the course makes for a great introduction to some of the language features.
+I've skipped some modules, like threading and advanced pointers managements, as I feel like I will not need that in the near future.
